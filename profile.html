@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile - Edu Track</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <div class="back-arrow-container">
+        <button onclick="window.location.href='marking.html'" class="back-arrow">
+            <i class='bx bx-left-arrow-circle'></i>
+        </button>
+    </div>
+    
+    </div>
+
+    <div class="sidebar">
+        <button class="active" onclick="switchToAccount(this)">Account</button>
+        <button onclick="switchToAbout(this)">About</button>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-box">
+            <div class="profile-title">Profile</div>
+            <div class="avatar">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Avatar">
+            </div>
+            <div class="info-group">
+                <label>Username:</label>
+                <div class="underline"></div>
+                <label>Email:</label>
+                <div class="underline"></div>
+            </div>
+            <form id="changePasswordForm" class="change-section">
+                <h2>Change password:</h2>
+                <label>Current password:</label>
+                <input type="password" id="currentPassword" placeholder="Enter current password" />
+                <label>New password:</label>
+                <input type="password" id="newPassword" placeholder="Enter new password" />
+                <label>Confirm new password:</label>
+                <input type="password" id="confirmPassword" placeholder="Re-enter new password" />
+                <button type="submit" class="change-btn">Change Account Password</button>
+            </form>
+        </div>
+    </div>
+    <script src="profile.js"></script>
+</body>
+</html>

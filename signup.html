@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - Edu Track</title>
+  <link rel="stylesheet" href="signup.css" />
+</head>
+<body>
+    <div class="logo">
+      <img src="assets/EEE.png" alt="Edu Logo" />
+    </div>
+ 
+    <div id="notification" class="hidden">Signed up successfully!</div>
+  
+    <div class="signup-box">
+      <h2>Sign Up</h2>
+      <form id="signupForm">
+        <input id="fullname" type="text" placeholder="Fullname" required />
+        <input id="email" type="email" placeholder="Email" required />
+        <input id="password" type="password" placeholder="Password" required />
+        <input id="confirmPassword" type="password" placeholder="Confirm Password" required />
+        <button type="submit">Sign Up</button>
+      </form>
+      
+      <div class="back">
+        Back to <a href="login.html"> Log In page</a>
+      </div>
+  
+      <div class="terms">
+        By signing up, you agree to the 
+        <a href="#">Terms of Service</a> and 
+        <a href="#">Privacy Policy</a>.
+      </div>
+    </div>
+  
+    <script src="signup.js"></script>
+  </body>
+  
