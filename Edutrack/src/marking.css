@@ -1,15 +1,14 @@
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
-  font-weight: bold;
+  font-family: 'Arial', sans-serif;
 }
 
 body, html {
   height: 100%;
-  background-color: #4a7c4a;
+  background-color: #2c3e50;
+  overflow: hidden; /* Prevent scrollbars */
 }
 
 .container {
@@ -19,7 +18,7 @@ body, html {
 
 .sidebar {
   width: 250px;
-  background-color: #4a7c4a;
+  background-color: #2c3e50;
   color: white;
   display: flex;
   flex-direction: column;
@@ -28,7 +27,7 @@ body, html {
   position: relative;
 }
 
-.profile{
+.profile {
   text-align: center;
   margin-bottom: 30px;
   cursor: pointer;
@@ -41,20 +40,18 @@ body, html {
   object-fit: cover;
   border: 2px solid white;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
 }
 
 .profile img:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 10px #07dd07;
+  box-shadow: 0 4px 10px #3498db;
 }
-
 
 .profile h3 {
   font-size: 20px;
   margin-top: 10px;
   color: white;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Arial', sans-serif;
   border-bottom: 2px solid #dad9d9;
 }
 
@@ -76,7 +73,6 @@ nav {
   align-items: center;
 }
 
-
 .nav-item {
   color: white;
   font-weight: bold;
@@ -94,10 +90,9 @@ nav {
 }
 
 .nav-item:hover {
-  background-color: #08db0f;
+  background-color: #3498db;
   transform: scale(1.05);
 }
-
 
 .nav-item.active {
   border-radius: 14px;
@@ -113,11 +108,11 @@ nav {
   border-radius: 14px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
-  margin-bottom: 10px; /* Adds space between buttons */
+  margin-bottom: 10px;
 }
 
 .marking-btn:hover, .progress-btn:hover {
-  background-color: #08db0f;
+  background-color: #3498db;
   transform: scale(1.05);
 }
 
@@ -127,7 +122,7 @@ nav {
 }
 
 .logout-btn {
-  background-color: #2b7b2b;
+  background-color: #3498db;
   border: none;
   border-radius: 12px;
   cursor: pointer;
@@ -155,46 +150,63 @@ nav {
   overflow-y: auto;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
+  font-weight: bold;
 }
 
 .content h1 {
-  color: rgb(26, 132, 7);
+  color: rgb(0, 0, 0);
   margin-bottom: 30px;
   font-size: 28px;
-  font-weight: bold;
   border-bottom: 2px solid #525252;
   padding-bottom: 8px;
-  font-family: 'Segoe UI', sans-serif;
-} 
+  font-family: 'Arial', sans-serif;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 30px;
+  margin-top: 40px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 30px; 
 }
 
 table th, table td {
-  padding: 12px;
+  padding: 14px 10px;
   text-align: center;
-  border: 1px solid #000000;
+  border: 1px solid #b0b0b0;
+  font-size: 15px;
 }
 
-table th {
-  background-color: #ff0000;
+table {
+  background-color: #3687c2;
+  color: white;
+  padding: 12px;
   font-weight: bold;
 }
 
 table td {
   background-color: #fff;
+  color: #000;
+}
+
+tbody tr:nth-child(even) td {
+  background-color: #f4f4f4;
 }
 
 .attendance {
   margin-bottom: 30px;
   text-align: center;
   font-size: 16px;
+  background-color: #f1f1f1;
+  padding: 20px;
+  border-radius: 8px;
 }
 
 .attendance p {
   margin: 5px 0;
+  font-size: 16px;
 }
 
 .based-grades {
@@ -206,15 +218,69 @@ table td {
 .based-grades th, .based-grades td {
   padding: 12px;
   text-align: center;
-  border: 1px solid #000000;
+  border: 1px solid #ffffff;
 }
 
 .based-grades th {
-  background-color: #00eaff;
+  background-color: #068b97;
+  color: #fff;
 }
 
 .based-grades td {
   background-color: #ffffff;
+  color: #000;
 }
 
+.section-label {
+  background-color: #3498db; 
+  color: white;
+  font-weight: bold;
+  text-align: center; 
+  padding: 12px;
+  font-size: 18px; 
+  width: 100%;
+}
 
+.grading-table {
+  width: 100%;
+  font-weight: normal;
+  border-collapse: collapse;
+  font-size: 16px;
+  margin-top: 50px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.grading-table th,
+.grading-table td {
+  border: 1px solid #ccc;
+  padding: 8px 10px;
+  text-align: center;
+  min-width: 100px;
+}
+
+.grading-table thead {
+  background-color: #3687c2; 
+  color: white;
+}
+
+.grading-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.passed {
+  color: green;
+  font-weight: bold;
+}
+
+.failed {
+  color: red;
+  font-weight: bold;
+}
+
+.grade-scale {
+  margin-top: 20px;
+  text-align: left;
+  font-size: 18px;
+  font-weight: normal;
+}

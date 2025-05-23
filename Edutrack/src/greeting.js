@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const greetingElement = document.getElementById('greeting');
 
-  const role = localStorage.getItem('selectedRole') || 'User';
+  const role = sessionStorage.getItem('selectedRole') || 'User';
 
   const hour = new Date().getHours();
   let timeGreeting = '';

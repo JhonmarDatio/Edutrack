@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Grades &amp; Performance - Edu Track</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #f8f2ef;
+    }
+
+    .sidebar {
+      background: #2c3e50;
+      width: 220px;
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .profile-img img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: box-shadow 0.3s;
+    }
+
+    .profile-img img:hover {
+      box-shadow: 0 0 15px 4px rgba(255, 255, 255, 0.6);
+    }
+
+    .profile-name {
+      font-weight: bold;
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+
+    #gradingSelect {
+      width: 80%;
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      margin-bottom: auto;
+      background: #fff;
+      color: #000;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    #gradingSelect:hover {
+      background: #3498db;
+      color: #1a1a1a;
+      transform: translateY(-2px) scale(1.06);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    #gradingSelect:active {
+      transform: scale(0.95);
+    }
+
+    .main-content {
+      flex-grow: 1;
+      padding: 30px;
+      overflow: auto;
+      max-height: 100vh;
+    }
+
+    #subjectSelect {
+      appearance: none;
+      background: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font: 14px Arial, sans-serif;
+      cursor: pointer;
+      margin-right: 8px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    #subjectSelect:hover {
+      background: #2579b8;
+      transform: scale(1.05);
+    }
+
+    #subjectSelect:active {
+      transform: scale(0.95);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #000;
+      background: #fff;
+      transition: 0.3s;
+    }
+
+    .tab.active {
+      background: #3498db;
+      color: #fff;
+    }
+
+    .tab:hover {
+      background: #3498db;
+      color: #1a1a1a;
+      transform: translateY(-2px) scale(1.06);
+    }
+
+    .batch-upload-btn {
+      background: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font: 600 14px Arial;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .batch-upload-btn:hover {
+      background: #2579b8;
+      transform: scale(1.05);
+    }
+
+    .batch-upload-btn:active {
+      transform: scale(0.95);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      font-size: 11px;
+    }
+
+    th, td {
+      border: 1px solid #999;
+      padding: 4px;
+      text-align: center;
+    }
+
+    thead th {
+      background: #f0f0f0;
+    }
+
+    .written-works-header {
+      background: #ffc0cb;
+    }
+
+    .performance-tasks-header {
+      background: #d9d2e9;
+    }
+
+    .quarterly-header {
+      background: #f9cb9c;
+    }
+
+    .section-title {
+      background: #b4c6e7;
+      color: #000;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    .gray-bg {
+      background: #e0e0e0;
+    }
+
+    .calculated {
+      background: #f2f2f2;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    td[contenteditable] {
+      background: #fff;
+    }
+
+    td.editable-name {
+      text-align: left;
+    }
+
+    .gray-bg {
+      background: #9df89d;
+    }
+
+    /* Logout Button (from Attendance Page) */
+    .logout {
+      margin-top: auto;
+      padding-top: 30px;
+    }
+
+    .logout-btn {
+      background-color: #3498db;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .logout-btn i {
+      font-size: 24px;
+      color: #ffffff;
+      transition: color 0.3s ease;
+    }
+
+    .logout-btn:hover i {
+      color: #960f0f;
+    }
+
+  </style>
+</head>
+<body>
+
+
+  <div class="sidebar">
+    <div class="profile-img" id="profileIcon"><img src="assets/profile.jpg" alt="Profile"></div>
+    <div class="profile-name">Teacher</div>
+
+    <select id="gradingSelect">
+      <option value="1st">📘 1st Quarter</option>
+      <option value="2nd">📙 2nd Quarter</option>
+      <option value="3rd">📗 3rd Quarter</option>
+      <option value="4th">📕 4th Quarter</option>
+    </select>
+
+    <div class="logout">
+      <a href="logout2.html" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </a>
+    </div>
+  </div>
+
+  
+  <div class="main-content">
+    <div style="text-align:right;margin-bottom:10px">
+      <input type="file" id="fileInput" accept=".xlsx" style="display:none">
+      <select id="subjectSelect" hidden></select>
+      <button class="batch-upload-btn" onclick="document.getElementById('fileInput').click()">📁 Upload</button>
+    </div>
+
+    <div class="tabs">
+      <a href="dash.html" class="tab">Attendance</a>
+      <a href="grades_performance.html" class="tab active">Grades &amp; Performance</a>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2" class="written-works-header">STUDENTS</th>
+          <th colspan="7" class="written-works-header">WRITTEN WORKS (30%)</th>
+          <th colspan="7" class="performance-tasks-header">PERFORMANCE TASKS (50%)</th>
+          <th colspan="3" class="quarterly-header">QUARTERLY ASSESSMENT (20%)</th>
+          <th rowspan="2" class="gray-bg">INITIAL<br>GRADE</th>
+          <th rowspan="2" class="gray-bg">QUARTERLY<br>GRADE</th>
+        </tr>
+        <tr>
+          <th>1</th><th>2</th><th>3</th><th>4</th><th>TOTAL</th><th>PS</th><th>WA</th>
+          <th>1</th><th>2</th><th>3</th><th>4</th><th>TOTAL</th><th>PS</th><th>WA</th>
+          <th>SCORE</th><th>PS</th><th>WA</th>
+        </tr>
+      </thead>
+      <tbody id="student-data">
+        <tr class="section-title">
+          <td>NAME</td>
+          <td>5</td><td>5</td><td>5</td><td>5</td><td>20</td><td>100</td><td>30</td>
+          <td>5</td><td>5</td><td>5</td><td>5</td><td>20</td><td>100</td><td>50</td>
+          <td>30</td><td>100</td><td>20</td>
+          <td>100</td><td>100</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <script>
+    
+    document.getElementById('profileIcon').onclick = () => location.href = 'profile.html';
+
+    const getCurrentSubject = () => document.getElementById('subjectSelect').value || 'Unknown';
+    const getCurrentQuarter = () => document.getElementById('gradingSelect').value;   // 1st, 2nd, 3rd, 4th
+    const storageKey = () => `grades-${getCurrentSubject()}-${getCurrentQuarter()}`;
+
+    function initSubjectDropdown() {
+      const select = document.getElementById('subjectSelect');
+      const scheduleRaw = localStorage.getItem('schedule');
+      if (!scheduleRaw) return;
+
+      const subjects = [...new Set(JSON.parse(scheduleRaw)
+                          .map(s => s.subject)
+                          .filter(Boolean))].sort((a, b) => a.localeCompare(b));
+
+      if (!subjects.length) return;
+
+    
+      select.innerHTML = '';
+      subjects.forEach((sub, i) => {
+        const o = document.createElement('option');
+        o.value = sub;
+        o.textContent = `📚 ${sub}`;
+        select.appendChild(o);
+        if (i === 0) select.value = sub;          
+      });
+
+      select.hidden = false;
+      select.onchange = loadGradesFromLocal;     
+      loadGradesFromLocal();                    
+    }
+
+    
+    const studentDataBody = document.getElementById('student-data');
+
+    function createStudentRow() {
+      const tr = document.createElement('tr');
+
+    
+      const name = document.createElement('td');
+      name.className = 'editable-name';
+      name.contentEditable = true;
+      tr.appendChild(name);
+
+     
+      for (let i = 0; i < 4; i++) {
+        const td = document.createElement('td');
+        td.contentEditable = true;
+        td.dataset.ww = '';
+        tr.appendChild(td);
+      }
+
+    
+      tr.innerHTML += `
+        <td class="calculated ww-total">0.00</td>
+        <td class="calculated ww-ps">0.00</td>
+        <td class="calculated ww-wa">0.00</td>
+      `;
+
+     
+      for (let i = 0; i < 4; i++) {
+        const td = document.createElement('td');
+        td.contentEditable = true;
+        td.dataset.pt = '';
+        tr.appendChild(td);
+      }
+
+   
+      tr.innerHTML += `
+        <td class="calculated pt-total">0.00</td>
+        <td class="calculated pt-ps">0.00</td>
+        <td class="calculated pt-wa">0.00</td>
+        <td contenteditable="true" data-qa="score"></td>
+        <td class="calculated qa-ps">0.00</td>
+        <td class="calculated qa-wa">0.00</td>
+        <td class="calculated initial-grade">0.00</td>
+        <td class="calculated final-grade">#N/A</td>
+      `;
+      return tr;
+    }
+
+ 
+    [...studentDataBody.querySelectorAll('tr:not(.section-title)')].forEach(r => r.remove());
+    const header = studentDataBody.querySelector('.section-title');
+    for (let i = 0; i < 30; i++) header.after(createStudentRow());
+
+    const num = v => isNaN(parseFloat(v)) ? 0 : +parseFloat(v);
+
+    
+    function saveGradesToLocal() {
+      const rows = [...studentDataBody.querySelectorAll('tr:not(.section-title)')];
+      const data = rows.map(r => [...r.children].map(c => c.textContent));
+      localStorage.setItem(storageKey(), JSON.stringify(data));
+    }
+
+    function loadGradesFromLocal() {
+      const stored = localStorage.getItem(storageKey());
+      const rows = [...studentDataBody.querySelectorAll('tr:not(.section-title)')];
+
+            rows.forEach(r => {
+        [...r.children].forEach((td, i) => {
+          if (i !== 0) td.textContent = '';
+        });
+      });
+
+      if (!stored) {               
+        rows.forEach(recalcRow);
+        return;
+      }
+
+      JSON.parse(stored).forEach((rowData, i) => {
+        const row = rows[i];
+        if (!row) return;
+        rowData.forEach((text, j) => {
+          if (row.children[j]) row.children[j].textContent = text;
+        });
+      });
+
+      rows.forEach(recalcRow);
+    }
+
+
+    function recalcRow(row) {
+      const ww = [...row.querySelectorAll('[data-ww]')].map(td => num(td.textContent));
+      const wwT = ww.reduce((a, b) => a + b, 0);
+      row.querySelector('.ww-total').textContent = wwT.toFixed(2);
+      row.querySelector('.ww-ps').textContent   = (wwT * 5).toFixed(2);
+      row.querySelector('.ww-wa').textContent   = (wwT * 1.5).toFixed(2);
+
+      const pt = [...row.querySelectorAll('[data-pt]')].map(td => num(td.textContent));
+      const ptT = pt.reduce((a, b) => a + b, 0);
+      row.querySelector('.pt-total').textContent = ptT.toFixed(2);
+      row.querySelector('.pt-ps').textContent   = (ptT * 5).toFixed(2);
+      row.querySelector('.pt-wa').textContent   = (ptT * 2.5).toFixed(2);
+
+      const qa = num(row.querySelector('[data-qa="score"]').textContent || 0);
+      const QA_PS_FACTOR = 100 / 30;  
+      const QA_WA_FACTOR =  20 / 30;   
+
+      row.querySelector('.qa-ps').textContent = (qa * QA_PS_FACTOR).toFixed(2);
+      row.querySelector('.qa-wa').textContent = (qa * QA_WA_FACTOR).toFixed(2);
+
+      const initial = (wwT * 1.5) + (ptT * 2.5) + (qa * QA_WA_FACTOR); 
+      row.querySelector('.initial-grade').textContent = initial.toFixed(2);
+      row.querySelector('.final-grade').textContent   = initial >= 0 ? initial.toFixed(2) : '#N/A';
+    }
+
+    
+    studentDataBody.addEventListener('input', e => {
+      if (!e.target.isContentEditable) return;
+      const tr = e.target.closest('tr');
+      if (!tr) return;
+      recalcRow(tr);
+      saveGradesToLocal();
+    });
+
+    
+    function updateStudentNamesAcrossSubjects(names) {
+      const scheduleRaw = localStorage.getItem('schedule');
+      if (!scheduleRaw) return;
+      const subjects = [...new Set(JSON.parse(scheduleRaw).map(s => s.subject).filter(Boolean))];
+
+      ['1st','2nd','3rd','4th'].forEach(q => {
+        subjects.forEach(subject => {
+          const key = `grades-${subject}-${q}`;
+          let data = JSON.parse(localStorage.getItem(key) || '[]');
+          while (data.length < 30) data.push(new Array(22).fill(''));
+          for (let i = 0; i < 30; i++) data[i][0] = names[i] || '';
+          localStorage.setItem(key, JSON.stringify(data));
+        });
+      });
+    }
+
+    
+    document.getElementById('fileInput').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = evt => {
+        const wb = XLSX.read(evt.target.result, { type: 'binary' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+        if (!data.length) return;
+
+       
+        const names = data.slice(1).map(row => (row.length > 0 ? row[0] : ''));
+
+        updateStudentNamesAcrossSubjects(names);
+        loadGradesFromLocal();
+      };
+      reader.readAsBinaryString(file);
+      e.target.value = '';
+    });
+
+
+   
+    document.getElementById('gradingSelect').onchange = loadGradesFromLocal; // reload when quarter changes
+    initSubjectDropdown();
+  </script>
+</body>
+</html>

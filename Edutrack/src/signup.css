@@ -1,8 +1,8 @@
 *
 body {
     margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(to bottom, #1a7839, #0d2413);
+    font-family: 'Arial', sans-serif;
+    background: #2c3e50;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -56,6 +56,7 @@ body {
     width: 80%;
     padding: 10px;
     background-color: #3baa5c;
+    margin-top: 15px;
     color: white;
     border: none;
     border-radius: 5px;
@@ -77,28 +78,10 @@ body {
     color: #004aad;
     text-decoration: none;
   }
-  
-  #notification {
-    background-color: #4caf50;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: bold;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    width: 300px; 
-    text-align: center; 
-  }
-  
-  #notification.show {
-    opacity: 1;
-  }
-  
   .hidden {
-    display: none;
-  }
-  
+  display: none;
+}
+
   .signup-box {
     background-color: #eeeeee;
     padding: 30px 40px;

@@ -19,31 +19,30 @@
         <a href="marking.html" class="nav-item">Markings</a>
         <button class="progress-btn">Progress</button>
       </nav>
-      <div class="logout" >
+      <div class="logout">
         <a href="logout.html" class="logout-btn">
           <i class="fa-solid fa-right-from-bracket"></i>
         </a>
       </div>
     </aside>
 
-    
     <main class="main-content">
-      <h1>Home</h1>
-      <div class="content-box">
-        <div class="legend">
-          <div><span class="dot blue"></span> <strong></strong> Performance</div>
-          <div><span class="dot green"></span> <strong></strong> Attendance</div>
-          <div><span class="dot orange"></span> <strong></strong> Markings</div>
+      <h1>Analytics</h1>
+      <div class="content-box"></div>
+
+      <div class="pie-chart">
+        <div class="chart-wrapper">
+          <canvas id="studentChart"></canvas>
         </div>
-        <div class="pie-chart">
-          <svg viewBox="0 0 32 32" class="chart">
-            <circle r="16" cx="16" cy="16" class="circle-bg" />
-            <circle r="16" cx="16" cy="16" class="circle-perf" />
-            <circle r="16" cx="16" cy="16" class="circle-att" />
-            <circle r="16" cx="16" cy="16" class="circle-mark" />
-          </svg>
-        </div>
+      </div>
+      </div>
+    </main>
+
   </div>
+
+ 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ 
   <script src="analytics.js"></script>
 </body>
 </html>

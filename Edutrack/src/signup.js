@@ -1,47 +1,37 @@
-document.getElementById('signupForm').addEventListener('submit', async function(event) {
-  event.preventDefault(); // Para hindi mag-reload ng page
-  
-  // Kunin ang mga values mula sa form fields
-  const fullname = document.getElementById('fullname').value;
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const confirmPassword = document.getElementById('confirmPassword').value;
+document.addEventListener("DOMContentLoaded", function () {
+  const signupForm = document.getElementById("signupForm");
+  const role = sessionStorage.getItem("selectedRole") || "student";
 
-  // Siguraduhing magkatugma ang password at confirm password
-  if (password !== confirmPassword) {
-    alert('Passwords do not match!');
-    return;
-  }
+  signupForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-  // Magpadala ng POST request sa backend (Rust) gamit ang fetch
-  try {
-    const response = await fetch('http://localhost:8080/create_account', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        fullname: fullname,
-        email: email,
-        password: password
-      })
-    });
+    const firstname = document.getElementById("firstname").value.trim();
+    const lastname = document.getElementById("lastname").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
-    const result = await response.json();
-    if (response.ok) {
-      // Success, pwede mong i-show ang success message o i-redirect ang user
-      document.getElementById('notification').classList.remove('hidden');
-      setTimeout(() => {
-        window.location.href = 'login.html'; // Redirect to login page
-      }, 2000);
-    } else {
-      // Error, ipakita ang error message
-      alert(result.error || 'An error occurred');
+    if (password !== confirmPassword) {
+      alert("❌ Password and Confirm Password do not match.");
+      return;
     }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Failed to connect to the backend');
-  }
-});
+    if (!firstname || !lastname || !email || !password) {
+      alert("❌ Please fill all required fields.");
+      return;
+    }
 
-  
+    const response = await fetch("/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ firstname, lastname, email, password, role })
+    });
+    const result = await response.json();
+
+    if (response.ok) {
+      alert("✅ Registration successful!");
+      window.location.href = "login.html";
+    } else {
+      alert("⚠️ " + (result.error || "Signup failed"));
+    }
+  });
+});

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grades Summary – Edu Track</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Arial, sans-serif;
+      display:flex;
+      min-height:100vh;
+      background:#ecf0f1}
+    .sidebar{
+      width:220px;
+      background:#2c3e50;
+      display:flex;
+      flex-direction:column;
+      padding:20px 0;
+      position:fixed;
+      top:0;
+      left:0;
+      bottom:0}
+    .sidebar button{background:none;
+      border:none;
+      color:#fff;
+      padding:15px 20px;
+      text-align:left;
+      font-size:16px;
+      cursor:pointer;
+      transition:background .3s}
+    .sidebar button:hover,.sidebar button.active{
+      background:#34495e}
+    .back-arrow-container{
+      position:absolute;
+      top:10px;
+      left:240px
+    }
+    .back-arrow{background:#3498db;
+      border:none;
+      color:#fff;
+      padding:10px 15px;
+      border-radius:5px;
+      font-size:18px;
+      cursor:pointer}
+
+    .content-container{
+      margin-left:240px;
+      padding:40px 20px;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center
+    }
+    .header-bar{
+      width:100%;
+      max-width:1000px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px}
+    h1{
+    font-size:28px;
+    color:#2ecc71;
+    text-align:left
+  }
+    #quarterSelect{
+      padding:8px 16px;
+      font-size:14px;
+      border-radius:8px;
+      border:none;
+      background:#3498db;
+      color:#fff;
+      cursor:pointer}
+
+    table{border-collapse:collapse;width:100%;max-width:1000px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.1);font-size:14px}
+    th,td{border:1px solid #ddd;padding:8px;text-align:center}
+    thead th{background:#3498db;color:#fff;font-weight:bold}
+    tbody tr:nth-child(even){background:#f9f9f9}
+    @media(max-width:768px){body{flex-direction:column}.sidebar{width:100%;flex-direction:row;justify-content:space-around;padding:10px;position:static}.back-arrow-container{left:10px;top:10px}.content-container{margin-left:0;padding:20px}.header-bar{flex-direction:column;gap:10px;align-items:flex-start}table{font-size:12px}}
+  </style>
+</head>
+<body>
+  <div class="back-arrow-container"><button onclick="goBack()" class="back-arrow"><i class="fas fa-arrow-left"></i></button></div>
+  <div class="sidebar">
+    <button onclick="switchToAccount()">Account</button>
+    <button onclick="switchToStudentList()">Student List</button>
+    <button onclick="switchToClassSchedule()">Class Schedule</button>
+    <button onclick="switchToGradesSummary()" class="active">Grades Summary</button>
+    <button onclick="switchToAbout()">About</button>
+  </div>
+  <div class="content-container">
+    <div class="header-bar">
+      <h1>Grades Summary</h1>
+      <select id="quarterSelect"></select>
+    </div>
+    <table>
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <script>
+    function goBack(){location.href='dash.html'}
+    function switchToAccount(){location.href='profile.html'}
+    function switchToStudentList(){location.href='studentlist.html'}
+    function switchToClassSchedule(){location.href='classschedule.html'}
+    function switchToGradesSummary(){}
+    function switchToAbout(){location.href='abouts.html'}
+
+    const quarters=["1st","2nd","3rd","4th"];
+    const qSel=document.getElementById('quarterSelect');
+    quarters.forEach(q=>{const opt=document.createElement('option');opt.value=q;opt.textContent=`📘 ${q} Quarter`;qSel.appendChild(opt)});
+    qSel.value=quarters[0];
+    qSel.onchange=render;
+
+    function getSubjects(){const raw=localStorage.getItem('schedule');if(!raw)return[];return[...new Set(JSON.parse(raw).map(s=>s.subject).filter(Boolean))].sort((a,b)=>a.localeCompare(b));}
+
+    function buildHeader(subjects){const th=document.getElementById('thead');th.innerHTML='';const tr=document.createElement('tr');tr.innerHTML='<th>STUDENT NAME</th>';subjects.forEach(sub=>tr.innerHTML+=`<th>${sub}</th>`);tr.innerHTML+='<th>Gen. Ave.</th>';th.appendChild(tr);}
+
+    function gatherData(subjects,q){const maxRows=30;const students=Array.from({length:maxRows},()=>({name:'',grades:{}}));subjects.forEach(sub=>{const key=`grades-${sub}-${q}`;const data=JSON.parse(localStorage.getItem(key)||'[]');for(let i=0;i<maxRows;i++){const row=data[i]||[];if(row[0])students[i].name=row[0];const g=parseFloat(row[21]);students[i].grades[sub]=isNaN(g)?'':g;}});return students.filter(s=>s.name.trim()!=='');}
+
+    function render(){const subjects=getSubjects();const table=document.querySelector('table');if(!subjects.length){table.style.display='none';return;}table.style.display='table';buildHeader(subjects);const tbody=document.getElementById('tbody');tbody.innerHTML='';const data=gatherData(subjects,qSel.value);data.forEach(stu=>{const tr=document.createElement('tr');tr.innerHTML=`<td style="text-align:left;font-weight:bold">${stu.name}</td>`;let sum=0,count=0;subjects.forEach(sub=>{const g=stu.grades[sub];tr.innerHTML+=`<td>${g!==''?g:''}</td>`;if(g!==''&&!isNaN(g)){sum+=g;count++;}});const ave=count?(sum/count).toFixed(2):'';tr.innerHTML+=`<td>${ave}</td>`;tbody.appendChild(tr);});}
+
+    render();
+  </script>
+</body>
+</html>

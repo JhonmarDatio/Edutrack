@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Attendance - Edu Track</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding-top: 40px;
+      display: flex;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f8f2ef;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 220px;
+      height: 100%;
+      padding: 20px;
+      color: #fff;
+      background: #2c3e50;
+    }
+    .profile-img img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .profile-img img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px 4px rgba(255,255,255,.6);
+    }
+    .profile-name { 
+      margin-bottom: 20px; 
+      color: #ccc; 
+      font-weight: bold; 
+    }
+
+    .month {
+      display: inline-block;
+      margin: 10px 0;
+      padding: 8px 12px;
+      text-align: center;
+      font-weight: bold;
+      color: #000;
+      background: #e0dcdc;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .3s, transform .3s, box-shadow .3s, color .3s;
+    }
+    .month:hover { 
+      background:#3498db; color:#fff; transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,0,0,.15); 
+    }
+
+    
+    .logout {
+      margin-top: auto;
+      padding-top: 30px;
+    }
+    .logout-btn {
+      background-color: #3498db;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+    .logout-btn i {
+      font-size: 24px;
+      color: #ffffff;
+      transition: color 0.3s ease;
+    }
+    .logout-btn:hover i {
+      color: #960f0f;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      margin-left: 240px;
+      padding: 30px;
+      max-height: 100vh;
+      overflow: auto;
+    }
+
+    .tabs {
+      display:flex;
+      flex-wrap:wrap;
+      gap:20px;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+    }
+    .tab-group { display:flex; flex-wrap:wrap; gap:20px; }
+
+    .tab {
+      padding:10px 20px;
+      font-weight:bold;
+      color:#000;
+      background:#fff;
+      border-radius:20px;
+      text-decoration:none;
+      cursor:pointer;
+      transition:background .3s, transform .3s;
+    }
+    .tab:hover { background:#3498db; transform:translateY(-2px); }
+    .tab.active { background:#3498db; color:#fff; }
+
+    .batch-upload-btn {
+      padding:8px 16px;
+      font:600 14px Arial, sans-serif;
+      color:#fff;
+      background:#3498db;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      transition:background .3s, transform .3s;
+    }
+    .batch-upload-btn:hover { background:#2579b8; transform:scale(1.05); }
+
+    .week-tabs {
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:20px;
+    }
+    .week-tab {
+      padding:8px 16px;
+      font-weight:bold;
+      background:#ddd;
+      border-radius:20px;
+      cursor:pointer;
+      transition:background .3s, transform .3s;
+    }
+    .week-tab:hover  { background:#3498db; transform:translateY(-2px); }
+    .week-tab.active { background:#3498db; color:#fff; }
+
+    table { width:100%; border-collapse:collapse; }
+    th,td { padding:5px; text-align:center; border:1px solid #ccc; }
+    td[contenteditable] { white-space:nowrap; text-align:left; vertical-align:top; }
+    input[type="checkbox"] { width:16px; height:16px; cursor:pointer; accent-color:#10a34f; }
+
+    .actions {
+      margin-top:10px;
+      font-size:14px;
+      color:#004aad;
+      cursor:pointer;
+      transition:color .3s, transform .3s;
+    }
+    .actions:hover { color:#002d70; transform:translateY(-2px); }
+
+    .modal {
+      position:fixed;
+      top:0; left:0;
+      display:none;
+      width:100%; height:100%;
+      background:rgba(0,0,0,.4);
+      justify-content:center;
+      align-items:center;
+      z-index:1000;
+    }
+    .modal-content {
+      width:90%;
+      max-width:500px;
+      padding:20px;
+      text-align:center;
+      background:#2c3e50;
+      border-radius:10px;
+    }
+    #monthOptions {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    .modal-month {
+      padding:10px;
+      font-weight:bold;
+      background:#eee;
+      border-radius:8px;
+      cursor:pointer;
+      transition:background .2s, transform .2s, color .2s;
+    }
+    .modal-month:hover { background:#3498db; color:#fff; transform:scale(1.05); }
+
+    .close-btn {
+      float:right;
+      font-size:20px;
+      color:#999;
+      cursor:pointer;
+      transition:color .3s;
+    }
+    .close-btn:hover { color:#fff; }
+
+    .highlight-today { background:lightgrey; }
+
+    #monthModal .modal-content h3 {
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="profile-img" id="profileIcon"><img src="assets/profile.jpg" alt="Profile"></div>
+    <div class="profile-name">Teacher</div>
+
+    <div id="month-display" class="month" onclick="openMonthModal()"></div>
+
+  
+    <div class="logout">
+      <a href="logout2.html" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </a>
+    </div>
+  </div>
+
+  
+  <div class="main-content">
+    <div class="tabs">
+      <div class="tab-group">
+        <a href="dash.html" class="tab active">Attendance</a>
+        <a href="grades_performance.html" class="tab">Grades &amp; Performance</a>
+      </div>
+
+      <button class="batch-upload-btn" onclick="document.getElementById('fileInput').click()">📁 Upload</button>
+      <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileUpload(event)">
+    </div>
+
+    <div class="week-tabs" id="week-tabs"></div>
+
+    <div id="attendance-section">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Name</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="actions" onclick="addRow()">+ Add new</div>
+    </div>
+  </div>
+
+ 
+  <div id="monthModal" class="modal">
+    <div class="modal-content">
+      <div class="close-btn" onclick="closeMonthModal()">×</div>
+      <h3>Select Month</h3>
+      <div id="monthOptions"></div>
+    </div>
+  </div>
+  
+  <script>
+
+const weekDays   = ['Sun','Mon','Tue','Wed','Thu','Fri'];
+const monthNames = ["January","February","March","April","May","June","July","August",
+                    "September","October","November","December"];
+
+let selectedDate = new Date();      
+let currentWeek  = 1;              
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('profileIcon')
+          .addEventListener('click', () => window.location.href = 'profile.html');
+});
+
+
+function openMonthModal(){ document.getElementById('monthModal').style.display='flex'; }
+function closeMonthModal(){ document.getElementById('monthModal').style.display='none'; }
+
+function generateMonthOptions(){
+  const c=document.getElementById('monthOptions'); c.innerHTML='';
+  const now=new Date();
+  for(let i=0;i<12;i++){
+    const d=new Date(now.getFullYear(),i,1);
+    const opt=document.createElement('div');
+    opt.className='modal-month';
+    opt.textContent=`${monthNames[i]} ${d.getFullYear()}`;
+    opt.onclick=()=>{ selectedDate=d; setCurrentWeekByToday();
+                      updateMonthDisplay(); generateWeekTabs();
+                      renderAttendanceTable(); closeMonthModal(); };
+    c.appendChild(opt);
+  }
+}
+
+
+function updateMonthDisplay(){
+  const options={month:'long',year:'numeric'};
+  document.getElementById('month-display').textContent=
+    '📅 '+selectedDate.toLocaleDateString('en-US',options);
+}
+function generateWeekTabs(){
+  const weeks=Math.ceil(
+      new Date(selectedDate.getFullYear(),selectedDate.getMonth()+1,0).getDate()/7);
+  const cont=document.getElementById('week-tabs'); cont.innerHTML='';
+  for(let i=1;i<=weeks;i++){
+    const t=document.createElement('div');
+    t.className='week-tab'+(i===currentWeek?' active':'');
+    t.textContent=`Week ${i}`;
+    t.onclick=()=>{ currentWeek=i;
+      document.querySelectorAll('.week-tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active'); renderAttendanceTable(); };
+    cont.appendChild(t);
+  }
+}
+
+
+const attKey=()=>`attendance-${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1)
+                     .padStart(2,'0')}-W${currentWeek}`;
+
+
+function renderAttendanceTable(){
+  const thead=document.querySelector('thead tr');
+  thead.innerHTML='<th>#</th><th>Name</th>';
+
+  const yr=selectedDate.getFullYear(), mo=selectedDate.getMonth(),
+        dim=new Date(yr,mo+1,0).getDate();
+  const s=(currentWeek-1)*7+1, e=Math.min(currentWeek*7,dim);
+
+  const valid=[];
+  for(let i=s;i<=e;i++){
+    const d=new Date(yr,mo,i);
+    if(d.getDay()>=1&&d.getDay()<=5){      // Mon-Fri only
+      const th=document.createElement('th');
+      th.textContent=`${i} (${weekDays[d.getDay()]})`;
+      thead.appendChild(th);
+      valid.push(i);
+    }
+  }
+  
+  thead.insertAdjacentHTML('beforeend',
+    '<th>Present</th><th>Absent</th>');
+
+  const today=new Date(); let todayCol=-1;
+  if(today.getFullYear()===yr&&today.getMonth()===mo){
+    todayCol=valid.indexOf(today.getDate());
+    if(todayCol!==-1) thead.children[todayCol+2].classList.add('highlight-today');
+  }
+
+  const stored=JSON.parse(localStorage.getItem(attKey())||'[]');
+  loadStudents(valid,stored,todayCol);
+}
+
+
+function loadStudents(validDays,stored,todayIdx){
+  const list=JSON.parse(localStorage.getItem('students'))||[];
+  const tbody=document.querySelector('tbody'); tbody.innerHTML='';
+
+  list.forEach((stu,idx)=>{
+    const rec=stored.find(r=>r.name===stu.name)||{checks:{}};
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${idx+1}</td><td contenteditable="true">${stu.name}</td>`;
+
+    validDays.forEach((d,colIdx)=>{
+      const td=document.createElement('td');
+      const cb=document.createElement('input');
+      cb.type='checkbox'; cb.checked=!!rec.checks[d];
+      cb.onchange=saveAllRows;
+      if(colIdx===todayIdx) td.classList.add('highlight-today');
+      td.appendChild(cb); tr.appendChild(td);
+    });
+
+    
+    tr.insertAdjacentHTML('beforeend','<td class="present">0</td><td class="absent">0</td>');
+    tbody.appendChild(tr);
+  });
+
+  computeCounts();                
+
+  
+  function saveAllRows(){
+    const rows=[...tbody.children].map(r=>{
+      const nm=r.children[1].textContent.trim();
+      const checks={};
+      [...r.querySelectorAll('input[type=checkbox]')].forEach((b,i)=>{
+        if(b.checked) checks[validDays[i]]=true;
+      });
+      return {name:nm,checks};
+    });
+    localStorage.setItem(attKey(),JSON.stringify(rows));
+    computeCounts();
+  }
+}
+
+
+
+function computeCounts(){
+  const today  = new Date();                     
+  const yr     = selectedDate.getFullYear();
+  const mo     = selectedDate.getMonth();
+  const weekEndDay = Math.min(currentWeek * 7,     
+                    new Date(yr, mo + 1, 0).getDate());
+
+  const weekDone = (
+    today.getFullYear() >  yr ||
+    (today.getFullYear() === yr && (
+        today.getMonth()  >  mo ||
+        (today.getMonth() === mo && today.getDate() > weekEndDay)
+    ))
+  );
+
+  const tbody  = document.querySelector('tbody');
+  [...tbody.children].forEach(tr=>{
+    const boxes   = [...tr.querySelectorAll('input[type=checkbox]')];
+    const present = boxes.filter(b=>b.checked).length;
+    const absent  = boxes.length - present;
+
+    tr.querySelector('.present').textContent = weekDone ? present : '—';
+    tr.querySelector('.absent').textContent  = weekDone ? absent  : '—';
+  });
+}
+
+
+
+function addRow(){
+  const students=JSON.parse(localStorage.getItem('students'))||[];
+  students.push({name:''});
+  localStorage.setItem('students',JSON.stringify(students));
+  renderAttendanceTable();
+}
+
+
+function handleFileUpload(e){
+  const file=e.target.files[0]; if(!file) return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  const reader=new FileReader();
+
+  if(ext==='csv'){
+    reader.onload=ev=>{
+      let names=ev.target.result.split('\n')
+                 .map(r=>r.trim()).filter(Boolean);
+      if(names[0]?.toLowerCase()==='name') names=names.slice(1);
+      saveStudents(names.map(n=>({name:n})));
+    };
+    reader.readAsText(file);
+  }else if(['xlsx','xls'].includes(ext)){
+    reader.onload=ev=>{
+      const data=new Uint8Array(ev.target.result);
+      const wb=XLSX.read(data,{type:'array'});
+      const sheet=wb.Sheets[wb.SheetNames[0]];
+      let rows=XLSX.utils.sheet_to_json(sheet,{header:1});
+      if(rows[0]&&String(rows[0][0]).toLowerCase()==='name') rows=rows.slice(1);
+      saveStudents(rows.map(r=>({name:r[0]})).filter(x=>x.name));
+    };
+    reader.readAsArrayBuffer(file);
+  }else alert('Unsupported file type.');
+}
+
+
+function saveStudents(stu){
+  localStorage.setItem('students',JSON.stringify(stu));
+  renderAttendanceTable();
+  alert('Batch upload successful!');
+}
+
+
+function setCurrentWeekByToday(){
+  const today=new Date();
+  currentWeek = (today.getFullYear()===selectedDate.getFullYear() &&
+                 today.getMonth()  ===selectedDate.getMonth())
+               ? Math.ceil(today.getDate()/7) : 1;
+}
+
+
+window.onload=()=>{
+  selectedDate=new Date(); setCurrentWeekByToday();
+  updateMonthDisplay(); generateMonthOptions();
+  generateWeekTabs(); renderAttendanceTable();
+};
+</script>
+</body>
+</html>

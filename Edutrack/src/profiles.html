@@ -6,7 +6,7 @@
     <title>Profile - Edu Track</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
+       body {
             margin: 0;
             font-family: Arial, sans-serif;
             display: flex;
@@ -62,7 +62,7 @@
             padding: 40px;
             flex: 1;
             background-color: #ecf0f1;
-            min-height: 100vh;
+            min-height: 90vh;
             display: flex;
             justify-content: center; /* Center the box horizontally */
         }
@@ -139,6 +139,7 @@
             border-radius: 10px;
             cursor: pointer;
         }
+        
 
         @media (max-width: 768px) {
             body {
@@ -160,7 +161,6 @@
             }
             .content-container {
                 padding: 10px;
-                margin-left: 0;
             }
             .container {
                 width: 100%;
@@ -170,10 +170,11 @@
                 font-size: 24px;
             }
         }
+        
     </style>
 </head>
 <body>
-    <!-- Back Button Above Sidebar -->
+    
     <div class="back-arrow-container">
         <button onclick="goBack()" class="back-arrow">
             <i class="fas fa-arrow-left"></i>
@@ -182,9 +183,6 @@
 
     <div class="sidebar">
         <button onclick="switchToAccount(this)" class="active">Account</button>
-        <button onclick="switchToStudentList(this)">Student List</button>
-        <button onclick="switchToClassSchedule(this)">Class Schedule</button>
-         <button onclick="switchToGradesSummary(this)">Grades Summary</button>   <!-- ← bagong button -->
         <button onclick="switchToAbout(this)">About</button>
     </div>
 
@@ -215,23 +213,14 @@
 
     <script>
         function goBack() {
-            window.location.href = 'dash.html'; // Redirect to dash.html
+            window.location.href = 'marking.html'; 
         }
         function switchToAccount(button) {
-            window.location.href = 'profile.html'; // Profile page
+            window.location.href = 'profiles.html'; 
         }
-        function switchToStudentList(button) {
-            window.location.href = 'studentlist.html'; // Redirect to Student List
-        }
-        function switchToClassSchedule(button) {
-            window.location.href = 'classschedule.html'; // Redirect to Class Schedule
-        }
-        function switchToGradesSummary(button) {
-    window.location.href = 'grades_summary.html';   // redirect to the summary page
-}
-
+    
         function switchToAbout(button) {
-            window.location.href = 'abouts.html'; 
+            window.location.href = 'about.html'; 
         }
         document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
             e.preventDefault();
